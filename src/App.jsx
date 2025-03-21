@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import RemoveTodo from "./components/RemoveTodo";
+import AddTodo from "./components/AddTodo";
 
 function useTodoList() {
   const [todoList, setTodoList] = useState("");
@@ -13,10 +15,8 @@ function useTodoList() {
       setTodoList("");
     }
   };
-
   const handleRemoveTodo = (id) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(updatedTodos);
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   };
 
   const handleKeyPress = (e) => {
@@ -42,7 +42,6 @@ function App() {
   const {
     todoList,
     todos,
-    isComposing,
     setTodoList,
     handleAddTodo,
     handleRemoveTodo,
@@ -53,16 +52,13 @@ function App() {
   return (
     <div className="App">
       <header>
-        <input
-          type="text"
-          placeholder="오늘 할 일을 적어주세요"
-          value={todoList}
-          onChange={(e) => setTodoList(e.target.value)}
-          onKeyDown={handleKeyPress}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => setIsComposing(false)}
+        <AddTodo
+          todoList={todoList}
+          setTodoList={setTodoList}
+          handleAddTodo={handleAddTodo}
+          handleKeyPress={handleKeyPress}
+          setIsComposing={setIsComposing}
         />
-        <button onClick={handleAddTodo}>Add Todo</button>
       </header>
       <section>
         <h2>Todo List</h2>
@@ -70,7 +66,7 @@ function App() {
           {todos.map((todo) => (
             <li key={todo.id}>
               {todo.text}{" "}
-              <button onClick={() => handleRemoveTodo(todo.id)}>Remove</button>
+              <RemoveTodo id={todo.id} onRemove={handleRemoveTodo} />
             </li>
           ))}
         </ul>
